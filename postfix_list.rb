@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'awesome_print'
-
 def read_db(db_path)
   data = []
   File.open(db_path, "r").each_line do |line|
@@ -25,29 +23,29 @@ def directory_hash(path)
   data
 end
 
-def print_virtual(domains)
+def export_virtual(file, domains)
   domains.sort.map do |domain_name,domain|
-    puts "##"
-    puts "## #{domain_name}"
-    puts "##"
-    puts
+    file.puts "##"
+    file.puts "## #{domain_name}"
+    file.puts "##"
+    file.puts
     domain.sort.map do |list,addresses|
       db_path = "db/#{domain_name}/#{list}"
       list_address = "#{list}@#{domain_name}"
-      puts "#{list_address.ljust(40)} #{addresses.join(',')}"
+      file.puts "#{list_address.ljust(40)} #{addresses.join(',')}"
     end
-    puts
-    puts
+    file.puts
+    file.puts
   end
 end
 
-def print_domains(domains)
+def export_domains(file, domains)
   domains.sort.map do |domain_name,domain|
-    puts "#{domain_name.ljust(77)} OK"
+    file.puts "#{domain_name.ljust(77)} OK"
   end 
 end
 
 domains = directory_hash('db')
 
-print_virtual(domains)
-print_domains(domains)
+export_virtual(File.open('/etc/postfix/virtual', 'w'), domains)
+export_domains(File.open('/etc/postfix/domains', 'w'), domains)
