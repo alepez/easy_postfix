@@ -45,7 +45,11 @@ def export_domains(file, domains)
   end 
 end
 
+raise 'db directory does not exist' unless File.directory?("db")
+
 domains = directory_hash('db')
 
 export_virtual(File.open('/etc/postfix/virtual', 'w'), domains)
 export_domains(File.open('/etc/postfix/domains', 'w'), domains)
+
+puts 'Remember to update with `postmap /etc/postfix/virtual /etc/postfix/domains`'
